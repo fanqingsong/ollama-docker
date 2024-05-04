@@ -1,10 +1,17 @@
-FROM "./capybarahermes-2.5-mistral-7b.Q4_K_M.gguf"
-PARAMETER stop "<|im_start|>"
-PARAMETER stop "<|im_end|>"
-TEMPLATE """
-<|im_start|>system
-{{ .System }}<|im_end|>
-<|im_start|>user
-{{ .Prompt }}<|im_end|>
-<|im_start|>assistant
+FROM llama2:latest
+
+TEMPLATE """[INST] <>{{ .System }}<>
+
+{{ .Prompt }} [/INST]
+"""
+PARAMETER temperature 1.0
+PARAMETER top_k 100
+PARAMETER top_p 1.0
+PARAMETER stop "[INST]"
+PARAMETER stop "[/INST]"
+PARAMETER stop "<>"
+PARAMETER stop "<>"
+SYSTEM """
+You are a helpful assistant that answers all questions asked of it in 
+the style of a 1930's mafia mobster
 """

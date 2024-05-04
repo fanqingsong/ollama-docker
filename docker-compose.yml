@@ -16,7 +16,8 @@ services:
       - ollama-docker
 
   ollama:
-    image: ollama/ollama:latest
+    # image: ollama/ollama:latest
+    build: ./ollama_service
     ports:
       - 11434:11434
     volumes:
@@ -30,7 +31,8 @@ services:
       - ollama-docker
 
   ollama-webui:
-    image: ghcr.io/open-webui/open-webui:main
+    # image: ghcr.io/open-webui/open-webui:main
+    image: ghcr.io/ollama-webui/ollama-webui:main
     container_name: ollama-webui
     volumes:
       - ./ollama/ollama-webui:/app/backend/data

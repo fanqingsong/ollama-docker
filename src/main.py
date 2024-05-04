@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import debugpy
 from typing import List
+from .basic_chain import chain
 
 
 app = FastAPI()
@@ -26,3 +27,12 @@ async def read_root():
         html_content = file.read()
 
     return HTMLResponse(content=html_content)
+
+
+@app.get("/basic_chain/")
+async def read_item(topic: str = "weather"):
+    return chain.run(topic)
+
+
+
+
