@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import debugpy
 from typing import List
 from .basic_chain import chain
+from .rag import rag_main
 
 
 app = FastAPI()
@@ -32,6 +33,11 @@ async def read_root():
 @app.get("/basic_chain/")
 async def read_item(topic: str = "weather"):
     return chain.run(topic)
+
+
+@app.get("/test_rag/")
+async def test_rag(url: str = "https://python.langchain.com/docs/get_started/introduction"):
+    return rag_main(url)
 
 
 

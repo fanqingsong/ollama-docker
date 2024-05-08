@@ -8,17 +8,20 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from langchain.embeddings import GPT4AllEmbeddings
 from langchain.embeddings import OllamaEmbeddings # We can also try Ollama embeddings
+from langchain.embeddings import FakeEmbeddings
+
 
 from langchain.llms import Ollama
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
-def main():
-    parser = argparse.ArgumentParser(description='Filter out URL argument.')
-    parser.add_argument('--url', type=str, default='https://valiantlynx.com', required=True, help='The URL to filter out.')
+def rag_main(url):
+    # parser = argparse.ArgumentParser(description='Filter out URL argument.')
+    # parser.add_argument('--url', type=str, default='https://valiantlynx.com', required=True, help='The URL to filter out.')
 
-    args = parser.parse_args()
-    url = args.url
+    # args = parser.parse_args()
+    # url = args.url
+    url = url if url else 'https://valiantlynx.com'
     print(f"using URL: {url}")
 
     loader = WebBaseLoader(url)
@@ -30,7 +33,7 @@ def main():
     print(f"Split into {len(all_splits)} chunks")
 
     vectorstore = Chroma.from_documents(documents=all_splits,
-                                        embedding=GPT4AllEmbeddings())
+                                        embedding=FakeEmbeddings(size=1352))
 
     # Retrieve
     # question = "What are the latest headlines on {url}?"
@@ -45,9 +48,12 @@ def main():
 
 
     # LLM
-    llm = Ollama(model="llama2-uncensored",
-                verbose=True,
-                callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]))
+    llm = Ollama(
+        base_url = "http://ollama:11434",
+        model="qwen:0.5b", 
+        # model="llama2-uncensored",
+        verbose=True,
+        callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]))
     print(f"Loaded LLM model {llm.model}")
 
     # QA chain
@@ -63,9 +69,11 @@ def main():
     question = f"summarize what this blog is trying to say? {url}?"
     result = qa_chain({"query": question})
 
-    # print(result)
+    print(result)
+
+    return result
     
 
 
 if __name__ == "__main__":
-    main()
+    rag_main()
